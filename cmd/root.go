@@ -1,16 +1,16 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -49,3 +49,22 @@ func init() {
 }
 
 
+func getThePath() string {
+    var dataDir string
+
+    switch osType := runtime.GOOS; osType {
+    case "linux":
+        dataDir = filepath.Join(os.Getenv("HOME"), ".local", "share", "ddaily")
+    case "darwin":
+        dataDir = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "ddaily")
+    default:
+        dataDir = filepath.Join(os.Getenv("HOME"), ".ddaily")
+    }
+
+    err := os.MkdirAll(dataDir, os.ModePerm)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return dataDir
+}
